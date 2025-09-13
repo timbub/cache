@@ -1,23 +1,25 @@
 #ifndef CACHE_FUNC
 #define CACHE_FUNC
 #include <unordered_map>
+#include <list>
+#include <cstddef>
 
 template <typename T>
 struct Node_map
 {
    T value;
    size_t freq;
-   std::list<T>::iterator it;
+   typename std::list<T>::iterator it;
 };
 
 template <typename T>
 struct cache_t
 {
-    size_t size;
+    size_t size_;
     size_t min_freq_ = 1;
     std::unordered_map<T, Node_map<T>> hash_id;
     std::unordered_map<size_t, std::list<T>> hash_fr;
-    bool update_cache(T page, cache_t* cache)
+    void update_cache(T page, cache_t* cache, size_t* hits)
     {
         auto it_id = cache->hash_id.find(page);
         if(it_id == cache->hash_id.end())
@@ -25,16 +27,14 @@ struct cache_t
             Node_map<T> node = {};
             node.value = page;
             node.freq = 1;
-            if(cache->size <= cache->hash_id.size())
+            if(cache->size_ <= cache->hash_id.size())
             {
                 auto it_min_fr= cache->hash_fr.find(cache->min_freq_);
                 T rm_value = it_min_fr->second.front();
                 it_min_fr->second.pop_front();
                 if(it_min_fr->second.empty()) cache->hash_fr.erase(it_min_fr);
                 cache->hash_id.erase(rm_value);
-                // если эл не найден и места нет
             }
-            // эл не найден но размер есть
             cache->hash_fr[node.freq].push_back(page);
             node.it = --cache->hash_fr[node.freq].end();
             cache->min_freq_ = 1;
@@ -42,7 +42,7 @@ struct cache_t
 
         } else
         {
-        // эл найден
+            (*hits)++;
             auto it_fr = cache->hash_fr.find(it_id->second.freq);
             it_fr->second.erase(it_id->second.it);
             if(it_fr->second.empty()) cache->hash_fr.erase(it_fr);
@@ -54,7 +54,7 @@ struct cache_t
             lst.push_back(page);
             it_id->second.it = --lst.end();
         }
-    } //добавить учет хитов
+    }
     cache_t(size_t sz) : size_(sz) {};
 };
-#endif CACHE_FUNC
+#endif
