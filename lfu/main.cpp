@@ -1,4 +1,4 @@
-#include "cache.hpp"
+#include "lfucache.hpp"
 #include <iostream>
 
 int main()
