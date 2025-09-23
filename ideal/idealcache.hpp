@@ -31,30 +31,24 @@ struct cache_t
             if(!find_page(page, l_size, &it_l))
             {
                 if(!it_id->second.empty()) it_id->second.pop();
-                std::cout << "list SIZE " << l_size <<"size" << size << "\n";
                 if(size <= l_size)
                 {
-                    //if(!it_id->second.empty()) it_id->second.pop();
+
                     auto it_delete = find_to_delete(page, list, l_size, data);
                     if (it_delete != list.end())
                     {
-                      std::cout << "i change " << *it_delete << " on " << page;
                       *it_delete = page;
-                      std::cout << " new " << *it_delete << std::endl;
                     }
                 } else
                 {
                     list.push_front(page);
-                    //if(!it_id->second.empty()) it_id->second.pop();
                 }
 
             } else
             {
-                std::cout << "i hit" << page << "\n";
                 (*hits)++;
                 if(!it_id->second.empty()) it_id->second.pop();
             }
-            print_cache(&list);
         }
     }
     typename std::list<T>::iterator find_to_delete(T page, typename std::list<T>& lst, size_t l_size, data_t<T>* data)
@@ -64,7 +58,6 @@ struct cache_t
 
         if (data->hash.find(page)->second.empty())
         {
-            std::cout << "no chance for " << page << std::endl;
             return lst.end();
         }
         size_t max_position = data->hash.find(page)->second.front();
@@ -81,7 +74,6 @@ struct cache_t
             {
                 max_position = current_position;
                 it_delete = it_l;
-                std::cout << "candidate " << *it_delete << " position " << max_position << std::endl;
             }
             it_l++;
         }
@@ -95,14 +87,6 @@ struct cache_t
             (*it_l)++;
         }
         return false;
-    }
-    void print_cache(std::list<T> *list)
-    {
-        for (const T &x: *list)
-        {
-            std::cout << x << " ";
-        }
-        std::cout << std::endl;
     }
     cache_t(size_t sz) : size(sz) {};
 };

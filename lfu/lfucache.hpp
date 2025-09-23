@@ -23,7 +23,7 @@ struct cache_t
         auto it_id = hash_id.find(page);
         if(it_id == hash_id.end())
         {
-            std::cout << "i dont find " << page;
+            //std::cout << "i dont find " << page;
             Node_map<T> node = {};
             node.value = page;
             node.freq = 1;

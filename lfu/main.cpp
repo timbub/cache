@@ -13,7 +13,7 @@ int main()
         int page = 0;
         std::cin >> page;
         if (!std::cin.good()) std::cerr << "error input\n";
-        cache.update_cache(page, &cache, &hits);
+        cache.update_cache(page, &hits);
     }
     std::cout << hits << "\n";
     return 0;
