@@ -33,7 +33,6 @@ struct cache_t
                 if(!it_id->second.empty()) it_id->second.pop();
                 if(size <= l_size)
                 {
-
                     auto it_delete = find_to_delete(page, list, l_size, data);
                     if (it_delete != list.end())
                     {
@@ -60,7 +59,7 @@ struct cache_t
         {
             return lst.end();
         }
-        size_t max_position = data->hash.find(page)->second.front();
+        size_t max_position = 0;
 
         for(int i = 0; i < l_size; i++)
         {
