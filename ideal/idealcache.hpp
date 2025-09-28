@@ -1,6 +1,7 @@
 #pragma once
 #include <list>
 #include <unordered_map>
+#include <map>
 #include <queue>
 #include <cstddef>
 #include <iostream>
@@ -9,83 +10,70 @@ template <typename T>
 struct data_t
 {
     size_t size;
-    using hash_t = std::unordered_map<T, std::queue<int>>;
-    hash_t hash;
+    using hash_t = std::unordered_map<T, std::queue<size_t>>;
+    hash_t map;
     std::vector<T> dataset;
     data_t(size_t sz) : size(sz), dataset(sz) {};
 };
 
-template <typename T>
-struct cache_t
+template <typename T, typename Position>
+class cache_t
 {
+private:
     size_t size;
-    std::list<T> list;
+    std::unordered_map<T, typename std::multimap<Position, T>::iterator> cache_map;
+    std::multimap<Position, T> cache_heap;
+public:
     void update_cache(size_t* hits, data_t<T>* data, size_t num)
     {
         for(int i = 0; i < data->size; i++)
         {
-            size_t l_size = list.size();
-            auto it_l = list.begin();
+            //std::cout << "new page" << std::endl;
             T page = data->dataset[i];
-            auto it_id = data->hash.find(page);
-            if(!find_page(page, l_size, &it_l))
-            {
-                if(!it_id->second.empty()) it_id->second.pop();
-                if(size <= l_size)
-                {
-                    auto it_delete = find_to_delete(page, list, l_size, data);
-                    if (it_delete != list.end())
-                    {
-                      *it_delete = page;
-                    }
-                } else
-                {
-                    list.push_front(page);
-                }
 
+            auto it_data_page = data->map.find(page);
+            if(it_data_page == data->map.end()) continue;
+
+            size_t position_page = num + 1;
+            if(!it_data_page->second.empty()) it_data_page->second.pop();
+            if(!it_data_page->second.empty()) position_page = it_data_page->second.front();
+
+            auto it_cache_page = cache_map.find(page);
+            if(it_cache_page == cache_map.end())
+            {
+                size_t current_size  = cache_heap.size();
+                if(current_size >= size)
+                {
+                    auto it_delete = std::prev(cache_heap.end());
+                    //std::cout << " potential delete " << it_delete->second << std::endl;
+                    if (it_delete != cache_heap.end() && it_delete->first > position_page)
+                    {
+                        cache_map.erase(it_delete->second);
+                        cache_heap.erase(it_delete);
+
+                        auto it_new = cache_heap.insert({position_page ,page});
+                        //std::cout << "add to full " << page << std::endl;
+                        cache_map[page] = it_new; //позиция ключ
+                    }
+                }
+                else
+                {
+                    auto it_new = cache_heap.insert({position_page ,page});
+                    //std::cout << "add " << page << std::endl;
+                    cache_map[page] = it_new;
+                }
             } else
             {
+                cache_heap.erase(it_cache_page->second);
+                auto it_new = cache_heap.insert({position_page ,page});
+                //std::cout << "hit " << page << std::endl;
+                cache_map[page] = it_new;
                 (*hits)++;
-                if(!it_id->second.empty()) it_id->second.pop();
             }
+            // for (const auto &p : cache_heap) {
+            // std::cout << p.first << " -> " << p.second << "\n";
+            // }
         }
-    }
-    typename std::list<T>::iterator find_to_delete(T page, typename std::list<T>& lst, size_t l_size, data_t<T>* data)
-    {
-        auto it_delete = lst.begin();
-        auto it_l      = lst.begin();
-
-        if (data->hash.find(page)->second.empty())
-        {
-            return lst.end();
-        }
-        size_t max_position = 0;
-
-        for(int i = 0; i < l_size; i++)
-        {
-            if(data->hash.find(*it_l)->second.empty())
-            {
-                it_delete = it_l;
-                return it_l;
-            }
-            size_t current_position = data->hash.find(*it_l)->second.front();
-            if(max_position < current_position)
-            {
-                max_position = current_position;
-                it_delete = it_l;
-            }
-            it_l++;
-        }
-        return it_delete;
-    }
-    bool find_page(T page, size_t l_size, typename std::list<T>::iterator* it_l)
-    {
-        for (int i = 0; i < l_size; i++)
-        {
-            if(**it_l == page) return true;
-            (*it_l)++;
-        }
-        return false;
     }
     cache_t(size_t sz) : size(sz) {};
 };

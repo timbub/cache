@@ -7,7 +7,7 @@ int main()
     size_t num  = 0;
 
     std::cin >> size >> num;
-    cache_t<int> cache{size};
+    cache_t<int, int> cache{size};
     data_t<int>  data{num};
 
     for(int i = 0; i < num; i++)
@@ -16,7 +16,7 @@ int main()
         std::cin >> page;
         if (!std::cin.good()) std::cerr << "error input\n";
         data.dataset[i] = page;
-        data.hash[page].push(i);
+        data.map[page].push(i);
     }
     cache.update_cache(&hits, &data, num);
     std::cout << hits << "\n";
