@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <cstdlib>
-#include "idealcache.hpp"
+#include "../idealcache.hpp"
 
 template <typename T>
 struct test_t
