@@ -59,14 +59,14 @@ TEST(EndToEnd, In_Out)
         size_t hits = 0;
         size_t size = tests[i].size;
         size_t num = tests[i].num;
-        cache_t<int> cache{size};
+        cache_t<int,int> cache{size};
         data_t<int>  data{num};
 
         for(int j = 0; j < num; j++)
         {
             int page = tests[i].data[j];
             data.dataset[j] = page;
-            data.hash[page].push(i);
+            data.map[page].push(i);
         }
         cache.update_cache(&hits, &data, num);
         EXPECT_EQ (hits, tests[i].hits);
