@@ -19,6 +19,6 @@ int main()
         data.map[page].push(i);
     }
     cache.update_cache(&hits, &data, num);
-    std::cout << hits << "\n";
+    std::cout << hits << std::endl;
     return 0;
 }

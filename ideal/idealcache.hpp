@@ -28,7 +28,6 @@ public:
     {
         for(int i = 0; i < data->size; i++)
         {
-            //std::cout << "new page" << std::endl;
             T page = data->dataset[i];
 
             auto it_data_page = data->map.find(page);
@@ -41,39 +40,39 @@ public:
             auto it_cache_page = cache_map.find(page);
             if(it_cache_page == cache_map.end())
             {
-                size_t current_size  = cache_heap.size();
-                if(current_size >= size)
-                {
-                    auto it_delete = std::prev(cache_heap.end());
-                    //std::cout << " potential delete " << it_delete->second << std::endl;
-                    if (it_delete != cache_heap.end() && it_delete->first > position_page)
-                    {
-                        cache_map.erase(it_delete->second);
-                        cache_heap.erase(it_delete);
-
-                        auto it_new = cache_heap.insert({position_page ,page});
-                        //std::cout << "add to full " << page << std::endl;
-                        cache_map[page] = it_new; //позиция ключ
-                    }
-                }
-                else
-                {
-                    auto it_new = cache_heap.insert({position_page ,page});
-                    //std::cout << "add " << page << std::endl;
-                    cache_map[page] = it_new;
-                }
+                processing_new_element(page, position_page);
             } else
             {
-                cache_heap.erase(it_cache_page->second);
-                auto it_new = cache_heap.insert({position_page ,page});
-                //std::cout << "hit " << page << std::endl;
-                cache_map[page] = it_new;
+                processing_hit_element(page, position_page, it_cache_page->second);
                 (*hits)++;
             }
-            // for (const auto &p : cache_heap) {
-            // std::cout << p.first << " -> " << p.second << "\n";
-            // }
         }
+    }
+    void processing_new_element(size_t page, size_t position_page)
+    {
+        size_t current_size  = cache_heap.size();
+        if(current_size >= size)
+        {
+            auto it_delete = std::prev(cache_heap.end());
+            if (it_delete != cache_heap.end() && it_delete->first > position_page)
+            {
+                cache_map.erase(it_delete->second);
+                cache_heap.erase(it_delete);
+                auto it_new = cache_heap.insert({position_page ,page});
+                cache_map[page] = it_new;
+            }
+        }
+        else
+        {
+            auto it_new = cache_heap.insert({position_page ,page});
+            cache_map[page] = it_new;
+        }
+    }
+    void processing_hit_element(size_t page, size_t position_page, typename std::multimap<Position, T>::iterator it)
+    {
+        cache_heap.erase(it);
+        auto it_new = cache_heap.insert({position_page ,page});
+        cache_map[page] = it_new;
     }
     cache_t(size_t sz) : size(sz) {};
 };
