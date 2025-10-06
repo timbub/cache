@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include "lfucache.hpp"
 
+using namespace cache;
 template <typename T>
 struct test_t
 {
@@ -27,10 +28,10 @@ TEST(EndToEnd, In_Out)
         size_t hits = 0;
         size_t size = tests[i].size;
         size_t num = tests[i].num;
-        cache_t<int> cache{size};
+        Cache_t<int> cache{size};
         for(int j = 0; j < num; j++)
         {
-            cache.update_cache(tests[i].data[j], &hits);
+            if(cache.update_cache(tests[i].data[j])) hits++;
         }
         EXPECT_EQ (hits, tests[i].hits);
     }
