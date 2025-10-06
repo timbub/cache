@@ -9,9 +9,7 @@ cache
 |   |   ├── e2e.cpp
 |   |   ├── run_tests.sh
 |   |   ├── ...
-|   | 
 │   ├── CMakeLists.txt
-│   ├── e2e.cpp
 │   ├── idealcache.hpp
 │   └── main.cpp
 └── lfu
