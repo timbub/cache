@@ -4,6 +4,7 @@
 #include <list>
 #include <cstddef>
 #include <iterator>
+#include <cassert>
 
 namespace cache {
     template <typename T>
