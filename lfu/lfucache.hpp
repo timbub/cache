@@ -29,7 +29,7 @@ namespace cache {
             if(size_ <= hash_id.size())
             {
                 auto it_min_fr =  hash_fr.find(min_freq_);
-                if(  it_min_fr == hash_fr.find(min_freq_)) std::cerr << "element with min frequency was not found" << std::endl;
+                assert(it_min_fr != hash_fr.end() && "Element with min frequency was not found\n");
 
                 T rm_value = it_min_fr->second.front();
                 it_min_fr->second.pop_front();
