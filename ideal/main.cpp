@@ -18,7 +18,10 @@ int main()
         data.dataset[i] = page;
         data.map[page].push(i);
     }
-    cache.update_cache(&hits, &data, num);
+    for(int i = 0; i < data.size; i++)
+    {
+        if(cache.update_cache(data.dataset[i], &data, num)) hits++;
+    }
     std::cout << hits << std::endl;
     return 0;
 }

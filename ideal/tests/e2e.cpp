@@ -66,9 +66,12 @@ TEST(EndToEnd, In_Out)
         {
             int page = tests[i].data[j];
             data.dataset[j] = page;
-            data.map[page].push(i);
+            data.map[page].push(j);
         }
-        cache.update_cache(&hits, &data, num);
+        for(int j = 0; j < data.size; j++)
+        {
+            if(cache.update_cache(data.dataset[j], &data, num)) hits++;
+        }
         EXPECT_EQ (hits, tests[i].hits);
     }
 }
