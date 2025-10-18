@@ -59,12 +59,15 @@ TEST(EndToEnd, In_Out)
         size_t hits = 0;
         size_t size = tests[i].size;
         size_t num = tests[i].num;
+
+        using namespace cache;
         cache_t<int,int> cache{size};
         data_t<int>  data{num};
 
         for(int j = 0; j < num; j++)
         {
-            int page = tests[i].data[j];
+            int key = tests[i].data[j];
+            int page = slow_get_page<int,int>(key);
             data.dataset[j] = page;
             data.map[page].push(j);
         }

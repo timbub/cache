@@ -28,10 +28,10 @@ TEST(EndToEnd, In_Out)
         size_t hits = 0;
         size_t size = tests[i].size;
         size_t num = tests[i].num;
-        Cache_t<int> cache{size};
+        Cache_t<int,int> cache{size};
         for(int j = 0; j < num; j++)
         {
-            if(cache.update_cache(tests[i].data[j])) hits++;
+            if(cache.update_cache(tests[i].data[j], slow_get_page<int,int>)) hits++;
         }
         EXPECT_EQ (hits, tests[i].hits);
     }
